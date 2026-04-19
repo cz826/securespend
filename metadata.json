@@ -1,0 +1,6 @@
+{
+  "name": "SecureSpend",
+  "description": "Secure budgeting assistant autonomously managing bill payments and savings using Vertex AI and offering personalized financial advice to users.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

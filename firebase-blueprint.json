@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and security settings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "twoFactorEnabled": { "type": "boolean" },
+        "biometricEnabled": { "type": "boolean" },
+        "currency": { "type": "string" },
+        "theme": { "type": "string", "enum": ["light", "dark"] },
+        "language": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial transaction record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "merchant": { "type": "string" },
+        "isSuspicious": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "completed", "flagged"] }
+      },
+      "required": ["userId", "amount", "category", "date"]
+    },
+    "Bill": {
+      "title": "Bill",
+      "description": "Recurring bill or scheduled payment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "frequency": { "type": "string", "enum": ["monthly", "weekly", "yearly", "once"] },
+        "isAutoPay": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["unpaid", "paid"] }
+      },
+      "required": ["userId", "title", "amount", "dueDate"]
+    },
+    "SavingsGoal": {
+      "title": "SavingsGoal",
+      "description": "Personal savings goal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "targetName": { "type": "string" },
+        "targetAmount": { "type": "number" },
+        "currentAmount": { "type": "number" },
+        "deadline": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "targetName", "targetAmount"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Root user profile"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "User transaction history"
+    },
+    "/users/{userId}/bills/{billId}": {
+      "schema": "Bill",
+      "description": "User bills and scheduled payments"
+    },
+    "/users/{userId}/savings/{goalId}": {
+      "schema": "SavingsGoal",
+      "description": "User savings goals"
+    }
+  }
+}

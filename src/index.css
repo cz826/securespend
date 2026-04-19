@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", sans-serif;
+  --color-primary: #4F46E5; /* Indigo 600 */
+  --color-primary-dark: #4338CA; /* Indigo 700 */
+  --color-accent: #10B981; /* Emerald 500 */
+  --color-sidebar-active: #EEF2FF;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-slate-50 text-slate-900 transition-colors duration-500;
+  }
+  .dark body {
+    @apply bg-slate-900 text-slate-50;
+  }
+  .reading body {
+    @apply bg-[#f4ecd8] text-[#5b4636] selection:bg-[#dcd1b3];
+  }
+}
+
+.glass-card {
+  @apply bg-white/90 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-6 transition-all;
+}
+
+.dark .glass-card {
+  @apply bg-slate-800/80 border-slate-700 shadow-xl;
+}
+
+.reading .glass-card {
+  @apply bg-[#fdfaf1]/90 border-[#e5dcc3] shadow-md;
+}
+
+.sidebar-item-active {
+  @apply bg-indigo-50 text-indigo-600 border-r-4 border-indigo-600 font-semibold;
+}
+
+.dark .sidebar-item-active {
+  @apply bg-indigo-900/40 text-indigo-300 border-indigo-400;
+}
+
+.reading .sidebar-item-active {
+  @apply bg-[#e5dcc3] text-[#5b4636] border-r-4 border-[#5b4636] font-bold;
+}
+
+
+.status-indicator {
+  @apply w-2 h-2 rounded-full inline-block;
+}
+
+.indicator-secure {
+  @apply bg-emerald-500 shadow-[0_0_8px_#10B981];
+}
+
+

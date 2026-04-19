@@ -1,0 +1,106 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- PRIMITIVES ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+
+    // --- VALIDATION HELPERS ---
+    
+    function isValidUser(data) {
+      return data.userId == request.auth.uid 
+        && data.email is string 
+        && data.email.size() <= 255
+        && (data.theme == null || data.theme in ['light', 'dark']);
+    }
+
+    function isValidTransaction(data) {
+      return data.userId == request.auth.uid
+        && data.amount is number
+        && data.category is string
+        && data.category.size() <= 50
+        && data.date is timestamp
+        && (data.description == null || (data.description is string && data.description.size() <= 1000));
+    }
+
+    function isValidBill(data) {
+      return data.userId == request.auth.uid
+        && data.title is string
+        && data.title.size() <= 200
+        && data.amount is number
+        && data.dueDate is timestamp;
+    }
+
+    function isValidSavingsGoal(data) {
+      return data.userId == request.auth.uid
+        && data.targetName is string
+        && data.targetAmount is number
+        && data.currentAmount is number;
+    }
+
+    // --- RULES ---
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'theme', 'language', 'twoFactorEnabled', 'biometricEnabled']);
+    }
+
+    // Sub-collections: Transactions
+    match /users/{userId}/transactions/{transactionId} {
+      allow list, get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidTransaction(incoming()) && isValidId(transactionId);
+      allow update: if isOwner(userId) && isValidTransaction(incoming())
+        && existing().status != 'completed' // Terminal state locking
+        && incoming().diff(existing()).affectedKeys().hasOnly(['category', 'description', 'amount']);
+      allow delete: if isOwner(userId) && existing().status != 'completed';
+    }
+
+    // Sub-collections: Bills
+    match /users/{userId}/bills/{billId} {
+      allow list, get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidBill(incoming()) && isValidId(billId);
+      allow update: if isOwner(userId) && isValidBill(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'title', 'amount', 'dueDate', 'isAutoPay']);
+      allow delete: if isOwner(userId);
+    }
+
+    // Sub-collections: Savings
+    match /users/{userId}/savings/{goalId} {
+      allow list, get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidSavingsGoal(incoming()) && isValidId(goalId);
+      allow update: if isOwner(userId) && isValidSavingsGoal(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['currentAmount', 'targetName', 'targetAmount', 'deadline']);
+      allow delete: if isOwner(userId);
+    }
+  }
+}
