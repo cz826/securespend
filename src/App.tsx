@@ -44,7 +44,9 @@ import {
   RefreshCw,
   QrCode,
   Camera,
-  Maximize2
+  Maximize2,
+  Globe,
+  Languages
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import QRCode from "react-qr-code";
@@ -1048,6 +1050,7 @@ const AppLayout = () => {
   const { theme, setTheme } = useContext(ThemeContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const isDark = theme === 'dark';
   const isReading = theme === 'reading';
 
@@ -1086,7 +1089,72 @@ const AppLayout = () => {
             <button onClick={() => setTheme('reading')} className={`flex-1 p-2 rounded-lg flex justify-center transition-all ${theme === 'reading' ? 'bg-[#fdfaf1] text-[#5b4636] shadow-sm' : 'text-slate-400 hover:text-[#5b4636]'}`}><BookOpen size={18}/></button>
             <button onClick={() => setTheme('dark')} className={`flex-1 p-2 rounded-lg flex justify-center transition-all ${theme === 'dark' ? 'bg-slate-700 text-indigo-400 shadow-sm' : 'text-slate-400 hover:text-indigo-400'}`}><Moon size={18}/></button>
           </div>
-          <NavItem to="/settings" label="Preferences" icon={Settings} active={location.pathname === '/settings'} />
+
+          <div className="relative">
+            <AnimatePresence>
+              {isUserMenuOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute bottom-full left-0 mb-4 w-56 glass-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-3 shadow-2xl z-50 space-y-3"
+                >
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Preferences</p>
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                      <Languages size={16} className="text-slate-400" />
+                      <select className="bg-transparent text-xs font-bold text-slate-600 dark:text-slate-300 border-none p-0 focus:ring-0 outline-none w-full cursor-pointer">
+                        <option>EN (US)</option>
+                        <option>ZH (CN)</option>
+                        <option>MS (MY)</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                      <Globe size={16} className="text-slate-400" />
+                      <select className="bg-transparent text-xs font-bold text-slate-600 dark:text-slate-300 border-none p-0 focus:ring-0 outline-none w-full cursor-pointer">
+                        <option>USD ($)</option>
+                        <option>MYR (RM)</option>
+                        <option>SGD (S$)</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await signOut(auth);
+                          window.location.href = '/';
+                        } catch (err) {
+                          console.error("Sign out failed", err);
+                        }
+                      }}
+                      className="w-full flex items-center gap-3 p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl transition-all font-bold"
+                    >
+                      <LogOut size={16} />
+                      <span className="text-xs uppercase tracking-widest">Sign Out</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button 
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className={`w-12 h-12 lg:w-full lg:h-auto flex items-center justify-center lg:justify-start gap-3 p-3 rounded-2xl transition-all border-2 ${
+                isUserMenuOpen 
+                  ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none' 
+                  : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-600 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-600'
+              }`}
+            >
+              <div className="shrink-0">
+                <UserIcon size={20} />
+              </div>
+              <span className="hidden lg:inline text-sm font-bold uppercase tracking-tight">Protocol Controls</span>
+            </button>
+          </div>
+
+          <NavItem to="/settings" label="Settings" icon={Settings} active={location.pathname === '/settings'} />
         </div>
       </aside>
 
@@ -1189,9 +1257,43 @@ const AppLayout = () => {
                 ))}
               </nav>
               <div className="pt-8 border-t border-slate-100 dark:border-slate-800 reading:border-[#e5dcc3] space-y-4">
-                <Link to="/settings" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 text-lg font-bold p-3 text-slate-600 dark:text-slate-400 reading:text-[#8c705a]">
-                  <Settings size={24} /> Settings
-                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                    <Languages size={18} className="text-slate-400" />
+                    <select className="bg-transparent text-sm font-bold text-slate-600 dark:text-slate-300 border-none p-0 focus:ring-0 outline-none w-full">
+                      <option>EN</option>
+                      <option>ZH</option>
+                      <option>MS</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                    <Globe size={18} className="text-slate-400" />
+                    <select className="bg-transparent text-sm font-bold text-slate-600 dark:text-slate-300 border-none p-0 focus:ring-0 outline-none w-full">
+                      <option>USD</option>
+                      <option>MYR</option>
+                      <option>SGD</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <Link to="/settings" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 flex items-center gap-4 text-lg font-bold p-3 text-slate-600 dark:text-slate-400 reading:text-[#8c705a]">
+                    <Settings size={24} /> Settings
+                  </Link>
+                  <button 
+                    onClick={async () => {
+                      try {
+                        await signOut(auth);
+                        window.location.href = '/';
+                      } catch (err) {
+                        console.error("Sign out failed", err);
+                      }
+                    }}
+                    className="p-3 bg-rose-50 dark:bg-rose-950/20 text-rose-500 rounded-xl"
+                  >
+                    <LogOut size={24} />
+                  </button>
+                </div>
                 <div className="flex bg-slate-100 dark:bg-slate-800 reading:bg-[#e5dcc3] p-1 rounded-xl">
                   <button onClick={() => setTheme('light')} className={`flex-1 p-3 rounded-lg flex justify-center ${theme === 'light' ? 'bg-white text-amber-500 shadow-sm' : 'text-slate-400'}`}><Sun size={20}/></button>
                   <button onClick={() => setTheme('reading')} className={`flex-1 p-3 rounded-lg flex justify-center ${theme === 'reading' ? 'bg-[#fdfaf1] text-[#5b4636] shadow-sm' : 'text-slate-400'}`}><BookOpen size={20}/></button>
