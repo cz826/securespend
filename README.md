@@ -1,20 +1,32 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# SecureSpend: AI-Powered Financial Command Center
 
-# Run and deploy your AI Studio app
+**SecureSpend** is a next-generation financial management prototype designed for the modern "wealth-conscious" user. Built with a focus on security, clarity, and AI-driven intelligence, it transforms complex financial data into actionable insights.
 
-This contains everything you need to run your app locally.
+## 🚀 Live Demo
+[View Live Prototype](https://securespend-app-1078605882146.asia-southeast1.run.app)
 
-View your app in AI Studio: https://ai.studio/apps/55a1996f-2ca9-44f0-a008-6ce151e5f4c9
+## ✨ Key Features
+- **AI Financial Assistant**: Integrated Gemini-powered AI that provides real-time market insights and personalized saving tips.
+- **Glass-morphic Command Center**: A high-density, theme-aware dashboard showing balances, bill cycles, and asset distributions.
+- **Market Spectrum**: Real-time tracking of Stocks (AAPL, NVDA), Indices, and Currencies/Crypto.
+- **Reading Mode Protocol**: An editorial-styled "warm theme" inspired by premium financial journals to reduce eye strain during deep audits.
+- **Biometric-Ready Security**: Designed for one-handed operation on mobile with secure Firebase authentication flows.
 
-## Run Locally
+## 🛠️ Tech Stack
+- **Frontend**: React 19, Vite, Tailwind CSS (v4), Motion (for micro-animations).
+- **Backend**: Express.js (Node.js) serving a full-stack SPA.
+- **AI**: Google Gemini API via `@google/genai`.
+- **Database/Auth**: Firebase Firestore & Authentication.
+- **Deployment**: Google Cloud Run via Docker.
 
-**Prerequisites:**  Node.js
+## 🛡️ Security & Architecture
+- **Environment Driven**: API keys and secrets are managed via server-side environment variables.
+- **Containerized**: Fully Dockerized deployment for consistency across environments.
+- **Responsive**: Hybrid navigation system optimized for both Desktop Power Users and Mobile Biometric use.
 
+## 📖 Prototype Documentation
+This repository serves as the primary technical documentation. 
+For specific UI recipes used, refer to the integrated design system within the `src/` directory.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+*Developed for the Google AI Hackathon.*
